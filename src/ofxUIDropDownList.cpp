@@ -470,6 +470,7 @@ void ofxUIDropDownList::setSingleSelected(int index){
         selected.clear();
         ofxUILabelToggle *lt = toggles.at(index);
         selected.push_back(lt);
+        selectedIndeces.clear();
         selectedIndeces.push_back(index);
         setShowCurrentSelected(true);
     }else{
