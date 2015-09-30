@@ -64,6 +64,37 @@ void ofxUITabBar::addCanvas(ofxUIScrollableCanvas *_canvas)
     autoSizeToFitWidgets();
 }
 
+bool ofxUITabBar::setSelected( string name){
+    for(auto kv:canvases){
+        if( kv.second->getName() == name){
+            setSelected(kv.first);
+            return true;
+        }
+    }
+    return false;
+}
+
+bool ofxUITabBar::setSelected(ofxUIToggle * t){
+    if(active!=nullptr){
+        for(auto kv : canvases){
+            if(kv.second==active){
+                kv.first->setValue(false);
+                break;
+            }
+        }
+        active->disable();
+    }
+    if(!canvases.count(t)){
+        return false;
+    }
+    ofxUICanvas * c = canvases[t];
+    active = c;
+    t->setValue(true);
+    c->enable();
+    c->setPosition(rect->getX() + rect->getWidth() + padding*0.5, this->rect->getY());
+    return true;
+}
+
 void ofxUITabBar::mainUiEvent(ofxUIEventArgs &event)
 {
     string name = event.getName();
@@ -78,11 +109,8 @@ void ofxUITabBar::mainUiEvent(ofxUIEventArgs &event)
         }
         else if(it->second->getName() == name && event.getToggle()->getValue())
         {
-            active = it->second;
-            it->first->setValue(true);
-            it->second->enable();
-            it->second->setPosition(rect->getX() + rect->getWidth() + padding*0.5, this->rect->getY());
-            isChanging = true;
+            
+            isChanging = setSelected(it->first);
         }
         else
         {
